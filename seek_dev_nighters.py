@@ -9,19 +9,19 @@ END_NIGHT = 6
 FIRST_PAGE_NUMBER = 1
 
 
-def request_API_page(number_of_page):
-    URL_of_page = '{}{}'.format(URL, str(number_of_page))
-    return requests.get(URL_of_page)
+def request_api_page(number_of_page):
+    url_of_page = '{}{}'.format(URL, str(number_of_page))
+    return requests.get(url_of_page)
 
 
 def get_count_of_pages():
-    request = request_API_page(FIRST_PAGE_NUMBER).json()
+    request = request_api_page(FIRST_PAGE_NUMBER).json()
     return request['number_of_pages']
 
 
 def load_attempts(pages):
     for page in range(FIRST_PAGE_NUMBER, pages):
-        response = request_API_page(page).json()
+        response = request_api_page(page).json()
         for record in response['records']:
             yield {
                 'username': record['username'],
