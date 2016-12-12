@@ -50,5 +50,5 @@ def print_midnighters(midnighters):
 
 if __name__ == '__main__':
     records = load_attempts()
-    records = list(filter(lambda record: record['timestamp'] is not None, records))
+    records = filter(lambda record: record['timestamp'] is not None, records)
     print_midnighters(get_midnighters(records))
