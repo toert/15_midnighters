@@ -3,31 +3,31 @@ from pytz import timezone
 from datetime import datetime
 
 
-URL = 'https://devman.org/api/challenges/solution_attempts/?page='
+URL = 'https://devman.org/api/challenges/solution_attempts/'
 START_NIGHT = 0
 END_NIGHT = 6
 FIRST_PAGE_NUMBER = 1
 
 
 def request_api_page(number_of_page):
-    url_of_page = '{}{}'.format(URL, str(number_of_page))
-    return requests.get(url_of_page)
+    payload = {'page': number_of_page}
+    return requests.get(URL, params=payload)
 
 
-def get_count_of_pages():
-    request = request_api_page(FIRST_PAGE_NUMBER).json()
-    return request['number_of_pages']
-
-
-def load_attempts(pages):
-    for page in range(FIRST_PAGE_NUMBER, pages):
+def load_attempts():
+    page = FIRST_PAGE_NUMBER
+    while True:
         response = request_api_page(page).json()
+        page += 1
+        pages = response['number_of_pages']
         for record in response['records']:
             yield {
                 'username': record['username'],
                 'timestamp': record['timestamp'],
                 'timezone': record['timezone'],
             }
+        if page > pages:
+            break
 
 
 def get_midnighters(records):
@@ -49,7 +49,6 @@ def print_midnighters(midnighters):
 
 
 if __name__ == '__main__':
-    pages_count = get_count_of_pages()
-    records = list(load_attempts(pages_count))
+    records = load_attempts()
     records = list(filter(lambda record: record['timestamp'] is not None, records))
     print_midnighters(get_midnighters(records))
